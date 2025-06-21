@@ -11,7 +11,7 @@ export default function Logout() {
     // call the context logout, then redirect
     ;(async () => {
       await logout()
-      navigate('/login')  
+      navigate('/auth/login')  
     })()
   }, [logout, navigate])
 

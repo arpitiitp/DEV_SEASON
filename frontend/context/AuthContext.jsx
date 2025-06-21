@@ -5,63 +5,50 @@ import { useNavigate } from 'react-router-dom'
 
 const AuthContext = createContext(null)
 
-function AuthProvider({ children }) {
+export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  // On mount, verify session by pinging a protected endpoint
   useEffect(() => {
+    // on mount, verify session
     (async () => {
       try {
-        await axios.get('http://localhost:3000/', { withCredentials: true })
-        setUser({ authenticated: true })
+        const { data } = await axios.get(
+          'http://localhost:3000/auth/me',
+          { withCredentials: true }
+        )
+        setUser(data)  // now has { firstName, lastName, email, _id }
       } catch {
         setUser(null)
+      } finally {
+        setLoading(false)
       }
     })()
   }, [])
 
-  const login = async ({ email, password }) => {
-    await axios.post(
-      'http://localhost:3000/login',
-      { email, password },
-      { withCredentials: true }
-    )
+  const login = async creds => {
+    await axios.post('http://localhost:3000/auth/login', creds, { withCredentials: true })
     setUser({ authenticated: true })
     navigate('/')
   }
 
-  const register = async (profile) => {
-    await axios.post(
-      'http://localhost:3000/register',
-      profile,
-      { withCredentials: true }
-    )
-    // auto-login
+  const register = async profile => {
+    await axios.post('http://localhost:3000/auth/register', profile, { withCredentials: true })
     await login({ email: profile.email, password: profile.password })
   }
 
   const logout = async () => {
-    await axios.post(
-      'http://localhost:3000/logout',
-      {},
-      { withCredentials: true }
-    )
+    await axios.post('http://localhost:3000/auth/logout', {}, { withCredentials: true })
     setUser(null)
     navigate('/')
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   )
 }
 
-// default export for the provider
-export default AuthProvider
-
-// named export for the hook
-export function useAuth() {
-  return useContext(AuthContext)
-}
+export const useAuth = () => useContext(AuthContext)

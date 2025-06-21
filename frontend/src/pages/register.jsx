@@ -16,7 +16,7 @@ export default function Register() {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user) navigate('/')
+    if (user) navigate('/problems')
   }, [user, navigate])
 
   const handleSubmit = async e => {
@@ -24,70 +24,103 @@ export default function Register() {
     setError('')
     try {
       await register(form)
+      navigate('/problems')
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed')
     }
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md bg-white shadow-md rounded px-8 py-6">
-        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
-        {error && <p className="text-red-600 mb-4">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex space-x-2">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100">
+      <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8">
+        <h2 className="text-3xl font-extrabold text-center text-indigo-600 mb-6">
+          Create Your Account
+        </h2>
+        {error && (
+          <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
+            {error}
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="flex space-x-4">
+            <div className="flex-1">
+              <label className="block text-gray-700 mb-1" htmlFor="firstName">
+                First Name
+              </label>
+              <input
+                id="firstName"
+                type="text"
+                placeholder="John"
+                required
+                value={form.firstName}
+                onChange={e =>
+                  setForm(f => ({ ...f, firstName: e.target.value }))
+                }
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 transition"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-gray-700 mb-1" htmlFor="lastName">
+                Last Name
+              </label>
+              <input
+                id="lastName"
+                type="text"
+                placeholder="Doe"
+                required
+                value={form.lastName}
+                onChange={e =>
+                  setForm(f => ({ ...f, lastName: e.target.value }))
+                }
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 transition"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-1" htmlFor="email">
+              Email Address
+            </label>
             <input
-              type="text"
-              placeholder="First Name"
+              id="email"
+              type="email"
+              placeholder="you@example.com"
               required
-              value={form.firstName}
-              onChange={e =>
-                setForm(f => ({ ...f, firstName: e.target.value }))
-              }
-              className="flex-1 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-200"
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              required
-              value={form.lastName}
-              onChange={e =>
-                setForm(f => ({ ...f, lastName: e.target.value }))
-              }
-              className="flex-1 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              value={form.email}
+              onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 transition"
             />
           </div>
-          <input
-            type="email"
-            placeholder="Email"
-            required
-            value={form.email}
-            onChange={e =>
-              setForm(f => ({ ...f, email: e.target.value }))
-            }
-            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-200"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            required
-            value={form.password}
-            onChange={e =>
-              setForm(f => ({ ...f, password: e.target.value }))
-            }
-            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-200"
-          />
+
+          <div>
+            <label className="block text-gray-700 mb-1" htmlFor="password">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              required
+              value={form.password}
+              onChange={e =>
+                setForm(f => ({ ...f, password: e.target.value }))
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 transition"
+            />
+          </div>
+
           <button
             type="submit"
-            className="w-full py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+            className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition transform hover:scale-105"
           >
-            Register
+            Sign Up
           </button>
         </form>
-        <p className="mt-4 text-center text-gray-600">
+
+        <p className="mt-6 text-center text-gray-600">
           Already have an account?{' '}
-          <Link to="/login" className="text-indigo-600 hover:underline">
-            Login
+          <Link to="/login" className="text-indigo-600 font-medium hover:underline">
+            Log In
           </Link>
         </p>
       </div>
